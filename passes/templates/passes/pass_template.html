@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Temple Pass</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 2cm 2cm 2cm 2cm;
+      @bottom-center {
+        content: element(footer);
+      }
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      min-height: 29.7cm; /* A4 height */
+      position: relative;
+    }
+
+    .container {
+      position: relative;
+      min-height: calc(29.7cm - 4cm); /* A4 height minus margins */
+      padding-bottom: 80px; /* Space for footer */
+    }
+
+    .footer {
+      position: running(footer);
+      width: 100%;
+      border-top: 1px solid #000;
+      padding-top: 5px;
+      text-align: center;
+      font-size: 12px;
+      bottom: 0;
+    }
+
+    .footer p {
+      font-size: 10px;
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 30px;
+    }
+
+    .header-left-side {
+      width: 35%;
+    }
+
+    .header-left-side h3 {
+      margin: 0;
+      margin-bottom: 10px;
+      font-size: 16px;  /* Adjusted size */
+    }
+
+    .header-left-side p {
+      margin: 0;
+      font-size: 12px;
+    }
+
+    .header-center-img {
+      width: 20%;
+      text-align: center;
+      padding-top: 5px;  /* Reduced padding */
+    }
+
+    /* New styles for logo image */
+    .logo-image {
+      width: 35px;  /* Reduced from 50px */
+      height: auto;
+      display: inline-block;
+      margin-top: 5px;
+    }
+
+    .header-right-side {
+      width: 35%;
+      text-align: left;
+    }
+
+    .header-right-side p {
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .licence-no {
+      text-align: right;
+      text-decoration: underline;
+      margin: 20px 0;
+    }
+
+    .mid-heading {
+      text-align: center;
+      text-decoration: underline;
+      margin: 20px 0;
+    }
+
+    .content {
+      margin: 20px 0;
+      flex-grow: 1;
+    }
+
+    .content-first, .content-second {
+      text-align: justify;
+      margin: 10px 0;
+    }
+
+    .signature {
+      text-align: right;
+      margin-top: auto;
+      padding-top: 30px;
+    }
+
+    .signature img {
+      height: 50px;
+      margin: 10px 0;
+    }
+
+    /* Ensure images don't overflow */
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      min-height: calc(100vh - 250px); /* Adjust based on header height */
+    }
+
+    .content-wrapper {
+      flex: 1 0 auto;
+    }
+
+    strong {
+      font-weight: bold;
+    }
+
+    /* Current timestamp style */
+    .timestamp {
+      font-size: 10px;
+      color: #666;
+      text-align: right;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-left-side">
+        <h3>Kesineni Sivanath (Chinni)</h3>
+        <p>Member of Parliament</p>
+        <p>(Lok Sabha)</p>
+        <p>Vijayawada - Andhra Pradesh</p>
+      </div>
+
+      <div class="header-center-img">
+        <img src="https://media-hosting.imagekit.io/0b6a4ab8567043ca/Satyameva-Jayate.png?Expires=1839575509&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=WsDHXIDJlYQ25FBfJycnYZJH2ZlKfr0k7VlSJqZCQiIHKsGikqHtuCNfavSs4irRZIKijk~Fth4j7BJDMCRzDpHfHrrSLhguJJzTTO2iQn3h~mWi4uWBWdR72p6tEhNSO2DqVcR7-fK8jhEsczcg2gZSzC2DiiWzO1fdlRSSTj9~5GFfe8NY69igG2LOvmFvuGzr3yObzZv1RzPIRsUJYCfH-HVUgVqSj-4fD5Q09FCuduMOyYuD5Vy3XjEA6hheMTYw4Uc8P6Yi01Jk9sEFixMlfWvrfqEGMyGCVILGf-chOam0b1SiS8DIz16YOWbp7gJxoKCvYcC1vgbRAwb2-g__"
+             class="logo-image" alt="Satyameva Jayate">
+      </div>
+
+      <div class="header-right-side">
+        <strong>Member:</strong><br>
+        <p>Parliamentary Standing Committee on Defence</p>
+        <p>Parliamentary Standing Committee on Home Affairs</p>
+        <p>Consultative Committee on Ministry of Civil Aviation</p>
+        <p>AIIMS Mangalagiri</p>
+        <p>PRESIDENT: Andhra Cricket Association</p>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="content-wrapper">
+        <div class="licence-no">
+          <strong>{{ letter_no }}</strong>
+        </div>
+
+        <div class="mid-heading">
+          <strong>EXECUTIVE OFFICER</strong><br>
+          <strong>{{ temple }}</strong><br>
+          <strong>{{ temple_short }}</strong>
+        </div>
+
+        <div class="content">
+          <p class="content-first">
+            I would like to inform that Sri. <strong>{{ name }}</strong>,
+            Mobile. No: <strong>{{ phone }}</strong>, {{ id_proof_type }} no: <strong>{{ id_number }}</strong>
+            along with {{ num_persons }} member{{ num_persons|pluralize }} will arrive to <strong>{{ temple_short }}</strong> on <strong>{{ visit_date }}</strong>.
+          </p>
+          <p class="content-second">
+            {{ name }} may please be arranged <strong>VVIP PROTOCOL SPARSHA DARSHAN</strong>
+            on <strong>{{ visit_date }}</strong> and oblige.
+          </p>
+        </div>
+
+        <div class="signature">
+          Sincerely,<br>
+          <img src="https://media-hosting.imagekit.io/77aadb5deb3b4dae/signeture.png?Expires=1839576989&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=sZfBry1Jw002FeWysfU3z3T3Z8QDEfK7zpLuSpPMUKExTcn3wPZc1R~MoHG3G3IAGmP4I4KgvR-bv6oXiphmQSSYGSglYcZoH9TgKn3BaCydU74Arm-5qxDJDtJ1hMLOqsFi0zpDZXC15jfdl44ZvYCA98Z8CDqlPp6nbCnGsViq6Z6yWqQ7OLIz~-ilAe~1M99O2veybKAC-ABwqZE2OF4fQ5lfHCr5Y0E7C1rYIVKMHsyk-7tNOPmPfopZbmtRV53tQRRbUA-0ImGr0Gkdjiej1A57FO-lFR2RbClZROMdvjt4P5klbGIsGq7~lzHB4fCuJGvJSo4UFEvcpVNFaA__" alt="Signature"><br>
+          <strong>KESINENI SIVANATH (CHINNI)</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>
+      Office Address: N.T.R. Bhavan, Road No. 8, CTO Officers Colony, Vijayawada - 520 007, Andhra Pradesh<br>
+      Mob.: +91 9499100612, E-mail: kesineni.sivanath@sansad.nic.in
+    </p>
+    <div class="timestamp">
+      Generated on: {{ current_timestamp }} by {{ current_user }}
+    </div>
+  </div>
+</body>
+</html>
