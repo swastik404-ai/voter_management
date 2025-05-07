@@ -1,0 +1,7 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<h2>{{ news.title }}</h2>
+<p><strong>Published:</strong> {{ news.publish_date }}</p>
+<div>{{ news.description|safe }}</div>
+<p><a href="{% url 'admin:news_news_change' news.id %}">Back to Edit</a></p>
+{% endblock %}
