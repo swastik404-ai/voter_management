@@ -1,0 +1,289 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>News Logs</h2>
+
+    <div class="current-info mb-3">
+        <div class="row">
+            <div class="col-md-6">
+                <small class="text-muted">
+                    Current Date and Time (UTC): {{ current_time|date:"Y-m-d H:i:s" }}
+                </small>
+            </div>
+            <div class="col-md-6 text-right">
+                <small class="text-muted">
+                    Current User: {{ current_user }}
+                </small>
+            </div>
+        </div>
+    </div>
+
+    {% if messages %}
+    <div id="messages">
+        {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'success' %}success{% elif message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-3">
+        <li class="nav-item">
+            <a class="nav-link {% if active_tab == 'active' %}active{% endif %}"
+               href="?tab=active">Active News Logs</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if active_tab == 'archived' %}active{% endif %}"
+               href="?tab=archived">Archived News Logs</a>
+        </li>
+    </ul>
+
+    <!-- Action Buttons -->
+    <div class="mb-3">
+        <button id="deleteSelected" class="btn btn-danger" disabled>
+            Delete Selected
+        </button>
+        <button id="selectAll" class="btn btn-secondary">
+            Select All
+        </button>
+        <span id="selectedCount" class="ml-3 text-muted">
+            0 items selected
+        </span>
+    </div>
+
+    <!-- Table -->
+    <div class="tab-content">
+        <div class="tab-pane fade show active">
+            {% if logs %}
+            <form id="logsForm">
+                {% csrf_token %}
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="masterCheckbox" class="select-all">
+                            </th>
+                            <th>S.No</th>
+                            <th>Title</th>
+                            <th>Action</th>
+                            <th>Status</th>
+                            <th>Message</th>
+                            <th>Timestamp</th>
+                            <th>Operations</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs %}
+                        <tr>
+                            <td>
+                                <input type="checkbox" class="log-checkbox" value="{{ log.id }}">
+                            </td>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ log.news.title }}</td>
+                            <td>{{ log.action|title }}</td>
+                            <td>
+                                <span class="badge badge-{% if log.status == 'success' %}success{% else %}danger{% endif %}">
+                                    {{ log.status }}
+                                </span>
+                            </td>
+                            <td>{{ log.message }}</td>
+                            <td>{{ log.timestamp|date:"Y-m-d H:i:s" }}</td>
+                            <td>
+                                {% if active_tab == 'active' %}
+                                    <a href="{% url 'admin:news_news_change' log.news.id %}"
+                                       class="btn btn-primary btn-sm">Edit</a>
+                                    <button class="btn btn-warning btn-sm"
+                                            onclick="archiveNews({{ log.news.id }}, '{{ csrf_token }}')">
+                                        Archive
+                                    </button>
+                                {% else %}
+                                    <span class="badge badge-secondary">Archived</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </form>
+            {% else %}
+            <div class="alert alert-info">
+                No {% if active_tab == 'archived' %}archived{% else %}active{% endif %} news logs found.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .container {
+        padding: 20px;
+    }
+    .current-info {
+        color: #666;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+    }
+    .nav-tabs {
+        border-bottom: 2px solid #dee2e6;
+    }
+    .nav-tabs .nav-link {
+        border: none;
+        color: #495057;
+        font-weight: 500;
+    }
+    .nav-tabs .nav-link.active {
+        color: #007bff;
+        background: none;
+        border-bottom: 2px solid #007bff;
+    }
+    .alert {
+        margin-bottom: 20px;
+    }
+    .badge {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+    .btn-sm {
+        margin: 2px;
+    }
+    .table td {
+        vertical-align: middle;
+    }
+    .selected-row {
+        background-color: #e8f0fe !important;
+    }
+    #selectedCount {
+        display: inline-block;
+        padding: 6px 12px;
+        background-color: #f8f9fa;
+        border-radius: 4px;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const masterCheckbox = document.getElementById('masterCheckbox');
+    const logCheckboxes = document.querySelectorAll('.log-checkbox');
+    const deleteSelectedBtn = document.getElementById('deleteSelected');
+    const selectAllBtn = document.getElementById('selectAll');
+    const selectedCountSpan = document.getElementById('selectedCount');
+    const form = document.getElementById('logsForm');
+
+    function updateSelectedCount() {
+        const selectedCount = document.querySelectorAll('.log-checkbox:checked').length;
+        selectedCountSpan.textContent = `${selectedCount} items selected`;
+        deleteSelectedBtn.disabled = selectedCount === 0;
+    }
+
+    function updateRowStyle(checkbox) {
+        const row = checkbox.closest('tr');
+        if (checkbox.checked) {
+            row.classList.add('selected-row');
+        } else {
+            row.classList.remove('selected-row');
+        }
+    }
+
+    // Master checkbox handler
+    masterCheckbox.addEventListener('change', function() {
+        logCheckboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+            updateRowStyle(checkbox);
+        });
+        updateSelectedCount();
+    });
+
+    // Individual checkbox handler
+    logCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            updateRowStyle(this);
+            updateSelectedCount();
+
+            // Update master checkbox
+            const allChecked = document.querySelectorAll('.log-checkbox:checked').length === logCheckboxes.length;
+            masterCheckbox.checked = allChecked;
+        });
+    });
+
+    // Select All button handler
+    selectAllBtn.addEventListener('click', function() {
+        const isSelecting = !masterCheckbox.checked;
+        masterCheckbox.checked = isSelecting;
+        logCheckboxes.forEach(checkbox => {
+            checkbox.checked = isSelecting;
+            updateRowStyle(checkbox);
+        });
+        updateSelectedCount();
+    });
+
+    // Delete Selected handler
+    deleteSelectedBtn.addEventListener('click', function() {
+        const selectedIds = Array.from(document.querySelectorAll('.log-checkbox:checked'))
+            .map(checkbox => checkbox.value);
+
+        if (selectedIds.length === 0) {
+            alert('Please select items to delete');
+            return;
+        }
+
+        if (!confirm(`Are you sure you want to delete ${selectedIds.length} selected log entries?`)) {
+            return;
+        }
+
+        const formData = new FormData();
+        selectedIds.forEach(id => formData.append('selected_logs[]', id));
+
+        fetch('{% url "delete_selected_logs" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Reload the page to show updated list
+                window.location.reload();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while deleting the logs');
+        });
+    });
+
+    // Auto-hide alerts after 5 seconds
+    setTimeout(function() {
+        document.querySelectorAll('.alert').forEach(function(alert) {
+            alert.style.display = 'none';
+        });
+    }, 5000);
+});
+
+function archiveNews(newsId, csrfToken) {
+    if (confirm('Are you sure you want to archive this news?')) {
+        fetch(`/news/archive/${newsId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
+            },
+        }).then(response => {
+            if (response.ok) {
+                window.location.reload();
+            }
+        });
+    }
+}
+</script>
+{% endblock %}

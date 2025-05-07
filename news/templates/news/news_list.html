@@ -1,0 +1,53 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>News List</h2>
+    <a href="{% url 'news_add' %}" class="btn btn-primary mb-3">Add News</a>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Publish Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for news in news_items %}
+            <tr>
+                <td>{{ news.title }}</td>
+                <td>{{ news.publish_date }}</td>
+                <td>
+                    <a href="{% url 'news_edit' news.pk %}" class="btn btn-sm btn-primary">Edit</a>
+                    <button class="btn btn-sm btn-warning archive-btn" data-news-id="{{ news.pk }}">Archive</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+document.querySelectorAll('.archive-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+        const newsId = e.target.dataset.newsId;
+        try {
+            const response = await fetch(`/api/news/${newsId}/archive/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            });
+            if (response.ok) {
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+});
+</script>
+{% endblock %}
