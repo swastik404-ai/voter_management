@@ -1,0 +1,346 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    /* Reset and base styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background: #f5f5f5;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.6;
+    }
+
+    /* Container styles */
+    .preview-container {
+        max-width: 1000px;
+        margin: 30px auto;
+        padding: 30px;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-radius: 8px;
+    }
+
+    /* Header section */
+    .blog-header {
+        margin-bottom: 30px;
+        border-bottom: 2px solid #eef2f5;
+        padding-bottom: 20px;
+    }
+
+    .blog-header h1 {
+        color: #2c3e50;
+        font-size: 2.5em;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+
+    /* Meta information */
+    .blog-meta {
+        background: #f8fafc;
+        padding: 15px;
+        border-radius: 6px;
+        margin: 20px 0;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        color: #64748b;
+    }
+
+    .meta-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .meta-label {
+        font-weight: 600;
+        width: 120px;
+        color: #475569;
+    }
+
+    .meta-value {
+        color: #64748b;
+    }
+
+    /* Featured Image */
+    .blog-image {
+        margin: 25px 0;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .blog-image img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    /* Summary section */
+    .blog-summary {
+        background: #f1f5f9;
+        padding: 20px;
+        border-radius: 6px;
+        margin: 25px 0;
+        border-left: 4px solid #3b82f6;
+    }
+
+    .blog-summary h3 {
+        color: #1e40af;
+        margin-bottom: 10px;
+        font-size: 1.2em;
+    }
+
+    .blog-summary p {
+        color: #475569;
+        font-size: 1.1em;
+        line-height: 1.6;
+    }
+
+    /* Content section */
+    .blog-content {
+        margin: 30px 0;
+        color: #334155;
+        font-size: 1.1em;
+        line-height: 1.8;
+    }
+
+    .blog-content h1, .blog-content h2, .blog-content h3 {
+        color: #1e293b;
+        margin: 1.5em 0 0.8em;
+    }
+
+    .blog-content p {
+        margin-bottom: 1.2em;
+    }
+
+    .blog-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 6px;
+        margin: 1.5em 0;
+    }
+
+    /* Tags section */
+    .blog-tags {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 2px solid #eef2f5;
+    }
+
+    .blog-tags h4 {
+        color: #1e293b;
+        margin-bottom: 12px;
+        font-size: 1.1em;
+    }
+
+    .tag {
+        display: inline-block;
+        background: #e2e8f0;
+        color: #475569;
+        padding: 6px 12px;
+        border-radius: 15px;
+        margin: 0 6px 6px 0;
+        font-size: 0.9em;
+        transition: all 0.2s ease;
+    }
+
+    .tag:hover {
+        background: #cbd5e1;
+        transform: translateY(-1px);
+    }
+
+    /* Status indicators */
+    .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.9em;
+        font-weight: 500;
+    }
+
+    .status-draft {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .status-published {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .status-archived {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    /* Close button */
+    .close-preview {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        padding: 12px 24px;
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: 500;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.2s ease;
+        z-index: 1000;
+    }
+
+    .close-preview:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    /* Current info banner */
+    .current-info {
+        background: #1e40af;
+        color: white;
+        padding: 15px 30px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9em;
+    }
+
+    .current-info strong {
+        color: #93c5fd;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .preview-container {
+            margin: 15px;
+            padding: 20px;
+        }
+
+        .blog-header h1 {
+            font-size: 2em;
+        }
+
+        .current-info {
+            flex-direction: column;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .meta-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .meta-label {
+            width: auto;
+            margin-bottom: 4px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Current Info Banner -->
+<div class="current-info">
+    <div><strong>Current Date and Time (UTC):</strong> {{ current_datetime }}</div>
+    <div><strong>Current User's Login:</strong> {{ user_login }}</div>
+</div>
+
+<div class="preview-container">
+    <!-- Blog Header -->
+    <div class="blog-header">
+        <h1>{{ blog.title }}</h1>
+
+        <!-- Meta Information -->
+        <div class="blog-meta">
+            <div class="meta-item">
+                <span class="meta-label">Author:</span>
+                <span class="meta-value">{{ blog.author.get_full_name|default:blog.author.username }}</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Created:</span>
+                <span class="meta-value">{{ blog.created_at|date:"Y-m-d H:i:s" }}</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Status:</span>
+                <span class="status-badge status-{{ blog.status|lower }}">
+                    {{ blog.status|title }}
+                </span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Category:</span>
+                <span class="meta-value">{{ blog.category|title }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Image -->
+    {% if blog.featured_image %}
+    <div class="blog-image">
+        <img src="{{ blog.featured_image.url }}" alt="{{ blog.title }}">
+    </div>
+    {% endif %}
+
+    <!-- Summary -->
+    <div class="blog-summary">
+        <h3>Summary</h3>
+        <p>{{ blog.summary }}</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="blog-content">
+        {{ blog.content|safe }}
+    </div>
+
+    <!-- Tags -->
+    {% if blog.tags %}
+    <div class="blog-tags">
+        <h4>Tags</h4>
+        {% for tag in blog.tags.split %}
+            <span class="tag">{{ tag.strip }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- Close Button -->
+<button onclick="window.close()" class="close-preview">Close Preview</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add smooth scroll behavior
+    document.documentElement.style.scrollBehavior = 'smooth';
+
+    // Adjust container margin-top to account for fixed header
+    const currentInfo = document.querySelector('.current-info');
+    const container = document.querySelector('.preview-container');
+    if (currentInfo && container) {
+        container.style.marginTop = (currentInfo.offsetHeight + 30) + 'px';
+    }
+
+    // Add click handler for tags
+    document.querySelectorAll('.tag').forEach(tag => {
+        tag.addEventListener('click', function() {
+            this.classList.toggle('active');
+        });
+    });
+});
+</script>
+{% endblock %}

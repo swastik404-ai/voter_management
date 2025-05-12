@@ -1,0 +1,361 @@
+{% extends "admin/change_list.html" %}
+{% load admin_list %}
+{% load i18n %}
+{% load admin_urls %}
+{% load static %}
+
+{% block content %}
+<style>
+  /* Modern Reset and Base Styles */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  /* Custom Font Import */
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  /* Base Styles */
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #1a1a1a;
+    line-height: 1.6;
+  }
+
+  /* Hide default buttons */
+  .object-tools {
+    display: none !important;
+  }
+
+  /* Dashboard Header */
+  .dashboard-header {
+    background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+  }
+
+  .header-info {
+    flex: 1;
+  }
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    margin: 6px 0;
+    font-size: 14px;
+  }
+
+  .info-item strong {
+    font-weight: 500;
+    margin-right: 12px;
+    opacity: 0.9;
+  }
+
+  .info-item span {
+    font-weight: 600;
+    color: #ecf0f1;
+  }
+
+  /* Add Blog Button */
+  .add-blog-btn {
+    background: #27ae60;
+    color: white !important;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .add-blog-btn:hover {
+    background: #219a52;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .add-blog-btn i {
+    font-size: 16px;
+  }
+
+  /* Filter Section */
+  .filter-section {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e1e1e1;
+  }
+
+  .filter-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    align-items: end;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .filter-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 8px;
+  }
+
+  .filter-group select,
+  .filter-group input {
+    padding: 5px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: white;
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+
+  .filter-group select:hover,
+  .filter-group input:hover {
+    border-color: #cbd5e0;
+  }
+
+  .filter-group select:focus,
+  .filter-group input:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+  }
+
+  .filter-buttons {
+    display: flex;
+    gap: 12px;
+  }
+
+  /* Button Styles */
+  .action-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+  }
+
+  .apply-btn {
+    background-color: #4299e1;
+  }
+
+  .apply-btn:hover {
+    background-color: #3182ce;
+  }
+
+  .reset-btn {
+    background-color: #718096;
+  }
+
+  .reset-btn:hover {
+    background-color: #4a5568;
+  }
+
+
+
+  /* Table Styles */
+  #changelist {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e1e1e1;
+  }
+
+  #changelist table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 12px;
+  }
+
+  #changelist table thead th {
+    background: #f7fafc;
+    color: #2d3748;
+    padding: 16px;
+    font-weight: 600;
+    font-size: 14px;
+    border-bottom: 2px solid #e2e8f0;
+    text-align: left;
+  }
+
+  #changelist table tbody td {
+    padding: 16px;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 14px;
+    color: #4a5568;
+  }
+
+  #changelist table tbody tr:hover {
+    background-color: #f7fafc;
+  }
+
+  /* Status Badges */
+  .status-badge {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .status-published {
+    background: #c6f6d5;
+    color: #22543d;
+  }
+
+  .status-draft {
+    background: #fed7d7;
+    color: #822727;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .header-content {
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .add-blog-btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .filter-form {
+      grid-template-columns: 1fr;
+    }
+
+    #searchbar {
+      width: 100%;
+      margin-bottom: 12px;
+    }
+  }
+</style>
+
+<div id="content-main">
+  <!-- Dashboard Header -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="header-info">
+        <div class="info-item">
+          <strong>Current Date and Time (UTC):</strong>
+          <span>{{ current_datetime }}</span>
+        </div>
+
+      </div>
+      {% if has_add_permission %}
+        <a href="{% url 'admin:blogs_blog_add' %}" class="add-blog-btn">
+          <i class="fas fa-plus"></i> Add New Blog
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Filter Section -->
+  <div class="filter-section">
+    <form id="filter-form" class="filter-form">
+      <div class="filter-group">
+        <label for="status-filter">Status</label>
+        <select name="status" id="status-filter">
+          <option value="">All Statuses</option>
+          <option value="draft">Draft</option>
+          <option value="published">Published</option>
+          <option value="archived">Archived</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="category-filter">Category</label>
+        <select name="category" id="category-filter">
+          <option value="">All Categories</option>
+          <option value="blog">Blog</option>
+          <option value="insight">Insight</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="date-filter">Date</label>
+        <input type="date" id="date-filter" name="date">
+      </div>
+      <div class="filter-buttons">
+        <button type="button" id="apply-filters" class="action-btn apply-btn">
+          <i class="fas fa-filter"></i> Apply Filters
+        </button>
+        <button type="button" id="reset-filters" class="action-btn reset-btn">
+          <i class="fas fa-undo"></i> Reset
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Changelist Section -->
+  <div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">
+
+
+    <form id="changelist-form" method="post"{% if cl.formset and cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %} novalidate>
+      {% csrf_token %}
+      {% if cl.formset %}
+        <div>{{ cl.formset.management_form }}</div>
+      {% endif %}
+
+      {% if action_form and actions_on_top and cl.show_admin_actions %}{% admin_actions %}{% endif %}
+      {% result_list cl %}
+      {% if action_form and actions_on_bottom and cl.show_admin_actions %}{% admin_actions %}{% endif %}
+    </form>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Filter functionality
+    const filterForm = document.getElementById('filter-form');
+    const applyFilters = document.getElementById('apply-filters');
+    const resetFilters = document.getElementById('reset-filters');
+
+    applyFilters.addEventListener('click', function() {
+        const status = document.getElementById('status-filter').value;
+        const category = document.getElementById('category-filter').value;
+        const date = document.getElementById('date-filter').value;
+
+        let url = window.location.pathname + '?';
+        if (status) url += `status__exact=${status}&`;
+        if (category) url += `category__exact=${category}&`;
+        if (date) url += `created_at__date=${date}&`;
+
+        window.location.href = url.slice(0, -1);
+    });
+
+    resetFilters.addEventListener('click', function() {
+        window.location.href = window.location.pathname;
+    });
+
+    // Set filter values from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    document.getElementById('status-filter').value = urlParams.get('status__exact') || '';
+    document.getElementById('category-filter').value = urlParams.get('category__exact') || '';
+    document.getElementById('date-filter').value = urlParams.get('created_at__date') || '';
+});
+</script>
+{% endblock %}
