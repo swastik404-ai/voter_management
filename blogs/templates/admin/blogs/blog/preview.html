@@ -1,0 +1,296 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+<style>
+    .preview-container {
+        max-width: 900px;
+        margin: 20px auto;
+        padding: 30px;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-radius: 8px;
+    }
+
+    .blog-title {
+        color: #2c3e50;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #eee;
+        font-size: 2em;
+    }
+
+    .featured-image-container {
+        margin: 20px 0;
+        text-align: center;
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+    }
+
+    .featured-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        margin: 0 auto;
+        display: block;
+    }
+
+    .image-caption {
+        margin-top: 10px;
+        color: #666;
+        font-style: italic;
+    }
+
+    .metadata {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 6px;
+        margin: 20px 0;
+        font-size: 0.9em;
+        color: #495057;
+    }
+
+    .metadata-item {
+        margin: 8px 0;
+        padding: 5px 0;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .metadata-item:last-child {
+        border-bottom: none;
+    }
+
+    .preview-header {
+        background: #f8f9fa;
+        padding: 15px 20px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 1px solid #dee2e6;
+    }
+
+    .preview-info {
+        font-size: 0.9em;
+        color: #666;
+    }
+
+    .user-info {
+        font-weight: 500;
+        color: #495057;
+    }
+
+    .summary {
+        font-style: italic;
+        color: #666;
+        margin: 20px 0;
+        padding: 15px;
+        background: #fff8dc;
+        border-left: 4px solid #ffd700;
+        border-radius: 4px;
+    }
+
+    .content {
+        line-height: 1.8;
+        color: #333;
+        margin-top: 30px;
+        font-size: 1.1em;
+    }
+
+    .action-buttons {
+        margin-top: 30px;
+        text-align: center;
+        padding: 20px 0;
+        border-top: 1px solid #eee;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 0 10px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: #007bff;
+        color: white;
+        border: none;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+        border: none;
+    }
+
+    .btn:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+
+    .tags {
+        margin: 15px 0;
+    }
+
+    .tag {
+        display: inline-block;
+        background: #e9ecef;
+        padding: 4px 12px;
+        border-radius: 15px;
+        font-size: 0.85em;
+        margin: 2px 4px;
+        color: #495057;
+    }
+
+    .no-image {
+        padding: 40px;
+        text-align: center;
+        color: #6c757d;
+        background: #f8f9fa;
+        border: 2px dashed #dee2e6;
+        border-radius: 8px;
+    }
+
+    @media print {
+        .action-buttons {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="preview-container">
+    <div class="preview-header">
+        <div class="preview-info">
+            <strong>Preview Mode</strong> | Current Time: 2025-05-12 09:27:34 UTC
+        </div>
+        <div class="user-info">
+            Logged in as: swastik404-ai
+        </div>
+    </div>
+
+    <h1 class="blog-title">{{ blog.title }}</h1>
+
+    {% if blog.featured_image %}
+    <div class="featured-image-container">
+        <img
+            src="{{ blog.featured_image.url }}"
+            alt="{{ blog.title }}"
+            class="featured-image"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        >
+        <div class="no-image" style="display: none;">
+            Unable to load featured image
+        </div>
+        <div class="image-caption">
+            Featured image for "{{ blog.title }}"
+        </div>
+    </div>
+    {% else %}
+    <div class="featured-image-container">
+        <div class="no-image">
+            No featured image available
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="metadata">
+        <div class="metadata-item">
+            <strong>Author:</strong> {{ blog.author.get_full_name|default:blog.author.username }}
+        </div>
+        <div class="metadata-item">
+            <strong>Category:</strong> {{ blog.get_category_display }}
+        </div>
+        <div class="metadata-item">
+            <strong>Status:</strong> {{ blog.get_status_display }}
+        </div>
+        <div class="metadata-item">
+            <strong>Created:</strong> {{ blog.created_at|date:"F j, Y H:i" }} UTC
+        </div>
+        {% if blog.published_date %}
+        <div class="metadata-item">
+            <strong>Published:</strong> {{ blog.published_date|date:"F j, Y H:i" }} UTC
+        </div>
+        {% endif %}
+        {% if blog.tags %}
+        <div class="metadata-item">
+            <strong>Tags:</strong>
+            <div class="tags">
+                {% for tag in blog.tags.split %}
+                    <span class="tag">{{ tag }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if blog.summary %}
+    <div class="summary">
+        <strong>Summary:</strong><br>
+        {{ blog.summary }}
+    </div>
+    {% endif %}
+
+    <div class="content">
+        {{ blog.content|safe }}
+    </div>
+
+    <div class="action-buttons">
+        <a href="#" onclick="window.close();" class="btn btn-primary">Close Preview</a>
+        <a href="{% url 'admin:blogs_blog_change' blog.pk %}" class="btn btn-secondary">Edit Blog</a>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle external links
+    document.querySelectorAll('.content a').forEach(function(link) {
+        if (link.hostname !== window.location.hostname) {
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+        }
+    });
+
+    // Handle close button
+    document.querySelector('.btn-primary').addEventListener('click', function(e) {
+        e.preventDefault();
+        if (window.opener && !window.opener.closed) {
+            window.close();
+        } else {
+            window.history.back();
+        }
+    });
+
+    // Handle featured image
+    const featuredImage = document.querySelector('.featured-image');
+    if (featuredImage) {
+        featuredImage.addEventListener('load', function() {
+            console.log('Featured image loaded successfully');
+            this.style.display = 'block';
+            const noImage = this.nextElementSibling;
+            if (noImage) {
+                noImage.style.display = 'none';
+            }
+        });
+
+        featuredImage.addEventListener('error', function() {
+            console.error('Error loading featured image');
+            this.style.display = 'none';
+            const noImage = this.nextElementSibling;
+            if (noImage) {
+                noImage.style.display = 'block';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

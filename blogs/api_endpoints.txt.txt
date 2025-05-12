@@ -1,0 +1,20 @@
+API Endpoints:
+
+1. Blog List and Create:
+   - GET /api/blogs/
+   - POST /api/blogs/
+
+2. Blog Detail Operations:
+   - GET /api/blogs/{slug}/
+   - PUT /api/blogs/{slug}/
+   - PATCH /api/blogs/{slug}/
+   - DELETE /api/blogs/{slug}/
+
+3. Blog Actions:
+   - POST /api/blogs/{slug}/archive/
+   - POST /api/blogs/{slug}/publish/
+   - GET /api/blogs/{slug}/preview/
+
+Query Parameters:
+- status: Filter by status (draft, published, archived)
+- category: Filter by category (blog, insight)
