@@ -3,165 +3,278 @@
 
 {% block extrastyle %}
 <style>
+    /* Modern Reset and Base Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background: #f5f5f5;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+    }
+
+    /* Container Layout */
     .preview-container {
         max-width: 900px;
-        margin: 20px auto;
-        padding: 30px;
+        margin: 40px auto;
+        padding: 40px;
         background: white;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        border-radius: 12px;
     }
 
-    .blog-title {
-        color: #2c3e50;
-        margin-bottom: 25px;
-        padding-bottom: 15px;
-        border-bottom: 2px solid #eee;
-        font-size: 2em;
-    }
-
-    .featured-image-container {
-        margin: 20px 0;
-        text-align: center;
-        background: #f8f9fa;
+    /* Preview Header */
+    .preview-header {
+        background: linear-gradient(to right, #f8f9fa, #ffffff);
         padding: 20px;
         border-radius: 8px;
-        border: 1px solid #dee2e6;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 1px solid #e9ecef;
+    }
+
+    .preview-info {
+        font-size: 0.95em;
+        color: #6c757d;
+    }
+
+    /* Blog Title */
+    .blog-title {
+        color: #2c3e50;
+        margin: 25px 0;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #e9ecef;
+        font-size: 2.5em;
+        font-weight: 700;
+        line-height: 1.3;
+    }
+
+    /* Featured Image Section */
+    .featured-image-container {
+        width: 100%;
+        margin: 30px auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: transparent; /* Remove background for cleaner look */
+        padding: 0; /* Remove padding to ensure full-width alignment */
+        border: none; /* Remove border for cleaner look */
+    }
+
+    .featured-image-wrapper {
+        width: 100%;
+        max-width: 800px; /* Adjust this value based on your needs */
+        margin: 0 auto;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        border-radius: 12px;
+        background: #f8f9fa;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
     }
 
     .featured-image {
         max-width: 100%;
         height: auto;
-        border-radius: 8px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        margin: 0 auto;
         display: block;
+        border-radius: 8px;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .featured-image:hover {
+        transform: scale(1.02);
     }
 
     .image-caption {
-        margin-top: 10px;
-        color: #666;
+        width: 100%;
+        max-width: 800px;
+        margin-top: 15px;
+        color: #6c757d;
         font-style: italic;
+        text-align: center;
+        font-size: 0.95em;
+        padding: 0 20px;
     }
 
+
+    /* Metadata Section */
     .metadata {
         background: #f8f9fa;
-        padding: 15px;
-        border-radius: 6px;
-        margin: 20px 0;
-        font-size: 0.9em;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 30px 0;
+        font-size: 0.95em;
         color: #495057;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
     }
 
     .metadata-item {
-        margin: 8px 0;
-        padding: 5px 0;
-        border-bottom: 1px solid #dee2e6;
-    }
-
-    .metadata-item:last-child {
-        border-bottom: none;
-    }
-
-    .preview-header {
-        background: #f8f9fa;
-        padding: 15px 20px;
+        padding: 10px;
+        background: white;
         border-radius: 6px;
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border: 1px solid #dee2e6;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
 
-    .preview-info {
-        font-size: 0.9em;
-        color: #666;
-    }
-
-    .user-info {
-        font-weight: 500;
+    .metadata-label {
+        font-weight: 600;
         color: #495057;
+        margin-bottom: 5px;
+        display: block;
     }
 
-    .summary {
-        font-style: italic;
-        color: #666;
+    /* Tags Section */
+    .tags-container {
         margin: 20px 0;
-        padding: 15px;
-        background: #fff8dc;
-        border-left: 4px solid #ffd700;
-        border-radius: 4px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
     }
 
+    .tag {
+        background: #e9ecef;
+        color: #495057;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85em;
+        transition: all 0.3s ease;
+    }
+
+    .tag:hover {
+        background: #dee2e6;
+        transform: translateY(-1px);
+    }
+
+    /* Content Section */
     .content {
         line-height: 1.8;
         color: #333;
-        margin-top: 30px;
+        margin: 30px 0;
         font-size: 1.1em;
     }
 
-    .action-buttons {
-        margin-top: 30px;
-        text-align: center;
+    .content p {
+        margin-bottom: 1.5em;
+    }
+
+    .content img {
+        max-width: 100%;
+        height: auto;
+        margin: 20px 0;
+        border-radius: 8px;
+    }
+
+    /* Summary Section */
+    .summary {
+        font-style: italic;
+        color: #666;
+        margin: 25px 0;
+        padding: 20px;
+        background: #fff8dc;
+        border-left: 4px solid #ffd700;
+        border-radius: 6px;
+        line-height: 1.6;
+    }
+
+    /* Action Buttons */
+        .action-buttons {
+        margin-top: 40px;
         padding: 20px 0;
-        border-top: 1px solid #eee;
+        border-top: 1px solid #e9ecef;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
     }
 
     .btn {
         display: inline-block;
-        padding: 10px 20px;
-        margin: 0 10px;
-        border-radius: 4px;
+        padding: 14px 32px;
+        border-radius: 8px;
         text-decoration: none;
-        font-weight: 500;
+        font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
+        font-size: 1em;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: 2px solid transparent;
     }
 
+    /* New Light Button Styles */
     .btn-primary {
-        background: #007bff;
-        color: white;
-        border: none;
+        background: #e8f0ff; /* Light blue background */
+        color: #2563eb; /* Darker blue text */
+        border: 2px solid #2563eb; /* Border matching text */
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
     }
 
     .btn-secondary {
-        background: #6c757d;
+        background: #f1f5f9; /* Light gray background */
+        color: #475569; /* Slate text */
+        border: 2px solid #475569; /* Border matching text */
+        box-shadow: 0 4px 12px rgba(71, 85, 105, 0.1);
+    }
+
+    /* Hover Effects */
+    .btn-primary:hover {
+        background: #2563eb; /* Darker blue background on hover */
         color: white;
-        border: none;
+        box-shadow: 0 6px 15px rgba(37, 99, 235, 0.2);
     }
 
+    .btn-secondary:hover {
+        background: #475569; /* Slate background on hover */
+        color: white;
+        box-shadow: 0 6px 15px rgba(71, 85, 105, 0.2);
+    }
+
+    /* Active state */
+    .btn:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    /* Focus state for accessibility */
+    .btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+    }
+
+    /* Hover transition */
+    .btn {
+        transition: all 0.3s ease;
+    }
+
+    /* Additional hover effect */
     .btn:hover {
-        opacity: 0.9;
-        transform: translateY(-1px);
+        transform: translateY(-2px);
     }
 
-    .tags {
-        margin: 15px 0;
-    }
-
-    .tag {
-        display: inline-block;
-        background: #e9ecef;
-        padding: 4px 12px;
-        border-radius: 15px;
-        font-size: 0.85em;
-        margin: 2px 4px;
-        color: #495057;
-    }
-
-    .no-image {
-        padding: 40px;
-        text-align: center;
-        color: #6c757d;
-        background: #f8f9fa;
-        border: 2px dashed #dee2e6;
-        border-radius: 8px;
-    }
-
-    @media print {
+    /* Responsive styles */
+    @media (max-width: 768px) {
         .action-buttons {
-            display: none;
+            flex-direction: column;
+            gap: 15px;
+            padding: 15px 0;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px 24px;
+            font-size: 0.95em;
+            text-align: center;
         }
     }
 </style>
@@ -169,50 +282,37 @@
 
 {% block content %}
 <div class="preview-container">
+    <div class="preview-header">
 
+        <div class="preview-status">
+            Status: <span class="status-badge status-{{ blog.status|lower }}">{{ blog.status }}</span>
+        </div>
+    </div>
 
     <h1 class="blog-title">{{ blog.title }}</h1>
 
     {% if blog.featured_image %}
     <div class="featured-image-container">
-        <img
-            src="{{ blog.featured_image.url }}"
-            alt="{{ blog.title }}"
-            class="featured-image"
-            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-        >
-        <div class="no-image" style="display: none;">
-            Unable to load featured image
-        </div>
-        <div class="image-caption">
-             "{{ blog.title }}"
-        </div>
-    </div>
-    {% else %}
-    <div class="featured-image-container">
-        <div class="no-image">
-            No featured image available
-        </div>
+        <img src="{{ blog.featured_image.url }}" alt="{{ blog.title }}" class="featured-image">
+        {% if blog.image_caption %}
+        <div class="image-caption">{{ blog.image_caption }}</div>
+        {% endif %}
     </div>
     {% endif %}
 
 
-        {% if blog.tags %}
-        <div class="metadata-item">
-            <strong>Tags:</strong>
-            <div class="tags">
-                {% for tag in blog.tags.split %}
-                    <span class="tag">{{ tag }}</span>
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
-    </div>
 
     {% if blog.summary %}
     <div class="summary">
-        <strong>Summary:</strong><br>
         {{ blog.summary }}
+    </div>
+    {% endif %}
+
+    {% if blog.tags.all %}
+    <div class="tags-container">
+        {% for tag in blog.tags.all %}
+        <span class="tag">{{ tag.name }}</span>
+        {% endfor %}
     </div>
     {% endif %}
 
@@ -221,52 +321,8 @@
     </div>
 
     <div class="action-buttons">
-        <a href="#" onclick="window.close();" class="btn btn-primary">Close Preview</a>
-        <a href="{% url 'admin:blogs_blog_change' blog.pk %}" class="btn btn-secondary">Edit Blog</a>
+        <a href="{% url 'admin:blogs_blog_change' blog.id %}" class="btn btn-primary">Edit Blog</a>
+        <a href="{% url 'admin:blogs_blog_changelist' %}" class="btn btn-secondary">Back to List</a>
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Handle external links
-    document.querySelectorAll('.content a').forEach(function(link) {
-        if (link.hostname !== window.location.hostname) {
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
-        }
-    });
-
-    // Handle close button
-    document.querySelector('.btn-primary').addEventListener('click', function(e) {
-        e.preventDefault();
-        if (window.opener && !window.opener.closed) {
-            window.close();
-        } else {
-            window.history.back();
-        }
-    });
-
-    // Handle featured image
-    const featuredImage = document.querySelector('.featured-image');
-    if (featuredImage) {
-        featuredImage.addEventListener('load', function() {
-            console.log('Featured image loaded successfully');
-            this.style.display = 'block';
-            const noImage = this.nextElementSibling;
-            if (noImage) {
-                noImage.style.display = 'none';
-            }
-        });
-
-        featuredImage.addEventListener('error', function() {
-            console.error('Error loading featured image');
-            this.style.display = 'none';
-            const noImage = this.nextElementSibling;
-            if (noImage) {
-                noImage.style.display = 'block';
-            }
-        });
-    }
-});
-</script>
 {% endblock %}
